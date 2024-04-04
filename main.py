@@ -5,12 +5,14 @@ from urllib.parse import urljoin, urlparse
 import concurrent.futures
 import time
 
+default_path = 'image_downloader'
+if not os.path.exists(default_path):
+    os.mkdir(default_path)
+
 start = time.time()
 
 def download_images(url):
-
-    folder = url.split("://")[1].replace(':', '-').replace('?', '-').replace('=', '-').replace('/', '-')
-
+    folder = default_path + '/' + url.split("://")[1].replace(':', '-').replace('?', '-').replace('=', '-').replace('/', '-')
     if not os.path.exists(folder):
         os.mkdir(folder)
 
@@ -38,9 +40,10 @@ def download_images(url):
         full_url = urljoin(url, imgsrc)
         base_name = os.path.basename(urlparse(full_url).path)
         local_todo.append([folder + '/' + base_name, full_url])
-    
+    print(f'images from {url} fetched')
     with concurrent.futures.ThreadPoolExecutor() as executor:
         executor.map(download_todo, local_todo)
+    print(f'completed downloading from {url}')
 
 def download_todo(pair):
     path = pair[0]
@@ -58,6 +61,6 @@ def get_url(count):
 
 if __name__ == '__main__':
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        executor.map(download_images, get_url(10))
+        executor.map(download_images, get_url(5))
 
 print(f'completed in {int(time.time() - start)} seconds')
