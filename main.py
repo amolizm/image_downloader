@@ -10,6 +10,8 @@ if not os.path.exists(default_path):
     os.mkdir(default_path)
 
 start = time.time()
+start_pn = 1
+page_count = 5
 
 def download_images(url):
     folder = default_path + '/' + url.split("://")[1].replace(':', '-').replace('?', '-').replace('=', '-').replace('/', '-')
@@ -53,14 +55,16 @@ def download_todo(pair):
     with open(filename,'wb+') as f:
         f.write(r)
 
-def get_url(count):
+def get_url():
     urls = []
-    for i in range(1, count+1):
+    for i in range(start_pn, page_count+1):
         urls.append(f"https://www.zerochan.net/?p={i}")
     return urls
 
 if __name__ == '__main__':
+    start_pn = int(input("Start from page: "))
+    page_count = int(input("Pages to scan: "))
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        executor.map(download_images, get_url(5))
+        executor.map(download_images, get_url())
 
 print(f'completed in {int(time.time() - start)} seconds')
