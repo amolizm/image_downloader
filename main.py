@@ -51,8 +51,7 @@ def download_todo(pair):
     path = pair[0]
     url = pair[1]
     r=requests.get(url).content
-    filename= path +'.jpg'
-    with open(filename,'wb+') as f:
+    with open(path,'wb+') as f:
         f.write(r)
 
 def get_url():
